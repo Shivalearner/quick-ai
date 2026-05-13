@@ -8,6 +8,7 @@ createRoot(document.getElementById("root")).render(
   <ClerkProvider>
     <BrowserRouter>
       <App />
+      
     </BrowserRouter>
   </ClerkProvider>,
 );

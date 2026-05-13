@@ -23,7 +23,7 @@ const App = () => {
               Requires explicit navigation to that path */}
           <Route path="write-article" element={<WriteArticle />} />
           <Route path="blog-titles" element={<BlogTitles />} />
-          <Route path="generate-image" element={<GenrateImages />} />
+          <Route path="generate-images" element={<GenrateImages />} />
           <Route path="remove-background" element={<RemoveBackground />} />
           <Route path="remove-object" element={<RemoveObject />} />
           <Route path="review-resume" element={<ReviewResume />} />
