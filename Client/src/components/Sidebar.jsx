@@ -16,7 +16,7 @@ const navItems = [
   { to: "/ai", lable: "Dashboard", Icon: House },
   { to: "/ai/write-article", lable: "Write Article", Icon: SquarePen },
   { to: "/ai/blog-titles", lable: "Blog Titles", Icon: Hash },
-  { to: "/ai/generate-images", lable: "Genrate Images", Icon: Image },
+  { to: "/ai/generate-images", lable: "Generate Images", Icon: Image },
   { to: "/ai/remove-background", lable: "Remove Background", Icon: Eraser },
   { to: "/ai/remove-object", lable: "Remove Object", Icon: Scissors },
   { to: "/ai/review-resume", lable: "Review Resume", Icon: FileText },
