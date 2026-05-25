@@ -26,10 +26,3 @@ A fully functional AI SaaS app built with the PERN stack featuring subscription 
 3. Add your API keys
 4. `npm install` in both client and server
 5. `npm run dev`
-
-## 📦 Environment Variables
-```env
-VITE_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-DATABASE_URL=
-```
