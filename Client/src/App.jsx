@@ -17,9 +17,9 @@ const App = () => {
 
   useEffect(()=>{
     getToken().then((token)=>{console.log(token)})
-  })
+  },[])
   return (
-    <div>
+    <div> 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/ai" element={<Layout />}>

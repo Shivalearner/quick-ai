@@ -6,7 +6,7 @@ import aiRouter from "./routes/aiRoutes.js";
 import connectCloudinary from "./config/cloudinary.js";
 // Creating App using Express
 const app = express();
-await connectCloudinary
+await connectCloudinary()
 // Middleware
 app.use(cors());
 // All request will be pass using the cors package
