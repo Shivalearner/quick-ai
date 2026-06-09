@@ -5,13 +5,11 @@ import { clerkClient } from "@clerk/express";
 import axios from "axios";
 import fs from "fs";
 // 1. Import the utility to handle CommonJS modules
-import { createRequire } from 'module';
+import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
 // 2. Safe-load pdf-parse using require
-const pdf = require('pdf-parse');
-
-
+const pdf = require("pdf-parse");
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -41,7 +39,7 @@ export const generateArticle = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: length,
+      max_tokens: Math.ceil(length * 1.5),
     });
     const content = response.choices[0].message.content;
     // SQL Query to add this content into database
@@ -86,7 +84,7 @@ export const generateBlogTitle = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: 100,
+      max_tokens: 500,
     });
     const content = response.choices[0].message.content;
     // SQL Query to add this content into database
