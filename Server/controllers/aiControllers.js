@@ -31,7 +31,7 @@ export const generateArticle = async (req, res) => {
     }
 
     const response = await AI.chat.completions.create({
-      model: "gemini-3.5-flash",
+      model: "gemini-3.1-flash-lite",
       messages: [
         {
           role: "user",
@@ -39,7 +39,7 @@ export const generateArticle = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: Math.ceil(length * 1.5),
+      max_tokens: Math.ceil(length * 3),
     });
     const content = response.choices[0].message.content;
     // SQL Query to add this content into database
@@ -55,12 +55,18 @@ export const generateArticle = async (req, res) => {
     }
     res.json({ success: true, content });
   } catch (error) {
-    console.log(error);
+    if (error.status === 429) {
+      return res.json({
+        success: false,
+        message:
+          "Gemini free tier limit reached. Please wait 2 minutes and try again.",
+      });
+    }
     res.json({ success: false, message: error.message });
   }
 };
 
-// Generate BlogTitle
+// AI Blog Title Generator
 export const generateBlogTitle = async (req, res) => {
   try {
     const { userId } = await req.auth();
@@ -76,7 +82,7 @@ export const generateBlogTitle = async (req, res) => {
     }
     // Response get from gemini-3.5-flash API
     const response = await AI.chat.completions.create({
-      model: "gemini-3.5-flash",
+      model: "gemini-3.1-flash-lite",
       messages: [
         {
           role: "user",
@@ -84,7 +90,7 @@ export const generateBlogTitle = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: 1800,
     });
     const content = response.choices[0].message.content;
     // SQL Query to add this content into database
@@ -101,6 +107,13 @@ export const generateBlogTitle = async (req, res) => {
     res.json({ success: true, content });
   } catch (error) {
     console.log(error);
+    if (error.status === 429) {
+      return res.json({
+        success: false,
+        message:
+          "Gemini free tier limit reached. Please wait 2 minutes and try again.",
+      });
+    }
     res.json({ success: false, message: error.message });
   }
 };

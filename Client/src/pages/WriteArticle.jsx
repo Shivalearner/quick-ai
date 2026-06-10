@@ -9,11 +9,10 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 const WriteArticle = () => {
   const articleLength = [
-    { length: 800, text: "Short (500-800 words)" },
-    { length: 1200, text: "Medium (800-1200 words)" },
-    { length: 1600, text: "Long (1200+ words)" },
+    { length: 800, min: 500, max: 800, text: "Short (500-800 words)" },
+    { length: 1200, min: 800, max: 1200, text: "Medium (800-1200 words)" },
+    { length: 1600, min: 1200, max: 1600, text: "Long (1200+ words)" },
   ];
-
   // State Variables
   const [selectedLength, setSelectedLength] = useState(articleLength[0]);
   const [input, setInput] = useState("");
@@ -26,8 +25,13 @@ const WriteArticle = () => {
     event.preventDefault();
     try {
       setLoading(true);
-      const prompt = `Write an Article About ${input} in ${selectedLength.text}`;
-
+      const prompt = `Write a complete article about "${input}". 
+      Requirements:
+      - The article must be exactly between ${selectedLength.min} to ${selectedLength.max} words
+      - Write the full article from introduction to conclusion
+      - Do not cut off mid sentence
+      - Complete the article fully
+      - Use simple clear sentences`;
       // 🌟 FIXED: Formatted Axios parameters correctly & added () to getToken
       const token = await getToken();
       const { data } = await axios.post(
