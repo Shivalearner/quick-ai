@@ -4,12 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { clerkClient } from "@clerk/express";
 import axios from "axios";
 import fs from "fs";
-// 1. Import the utility to handle CommonJS modules
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-
-// 2. Safe-load pdf-parse using require
-const pdf = require("pdf-parse");
+import { PDFParse } from "pdf-parse";
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -161,7 +156,7 @@ export const generateImage = async (req, res) => {
 export const removeImageBackground = async (req, res) => {
   try {
     const { userId } = await req.auth();
-    const { image } = req.file;
+    const image = req.file;
     const plan = req.plan;
     if (plan !== "premium") {
       return res.json({
@@ -182,7 +177,7 @@ export const removeImageBackground = async (req, res) => {
     });
     // SQL Query to add this content into database
     await sql` INSERT INTO creations(user_id,prompt,content,type)
-    VALUES (${userId},"Remove background from image",${secure_url},'image')`;
+    VALUES (${userId},'Remove background from image',${secure_url},'image')`;
 
     res.json({ success: true, content: secure_url });
   } catch (error) {
@@ -195,7 +190,7 @@ export const removeImageBackground = async (req, res) => {
 export const removeImageObject = async (req, res) => {
   try {
     const { userId } = await req.auth();
-    const { image } = req.file;
+    const image = req.file;
     const { object } = req.body;
     const plan = req.plan;
 
@@ -226,17 +221,24 @@ export const removeImageObject = async (req, res) => {
   }
 };
 
-// Review Resume
+// // Review Resume
 export const resumeReview = async (req, res) => {
   try {
     const { userId } = await req.auth();
-    const { resume } = req.file;
+    const resume = req.file;
     const plan = req.plan;
 
     if (plan !== "premium") {
       return res.json({
         success: false,
         message: "This feature is only available for premium subscriptions",
+      });
+    }
+
+    if (!resume) {
+      return res.json({
+        success: false,
+        message: "Please upload a resume",
       });
     }
 
@@ -247,17 +249,50 @@ export const resumeReview = async (req, res) => {
       });
     }
 
-    // If the file is more than 5mb, we convert this resume using dataBuffer fileSystem
+    // Read uploaded PDF
     const dataBuffer = fs.readFileSync(resume.path);
 
-    // To extract text from the pdf using pdf-parse package
-    const pdfData = await pdf(dataBuffer);
+    // Extract text from PDF
+    const parser = new PDFParse({ data: dataBuffer });
+    const pdfData = await parser.getText();
 
-    const prompt = `Review the following resume and provide constructive feedback on its strength, weaknesses, and areas for improvement. Resume Content:\n\n${pdfData.text}`;
+    if (!pdfData?.text?.trim()) {
+      return res.json({
+        success: false,
+        message: "Could not extract text from the uploaded PDF",
+      });
+    }
 
-    // Response get from gemini-3.5-flash API
+    const prompt = `
+You are an expert technical recruiter and ATS resume reviewer.
+
+Analyze the resume and provide your response in Markdown format.
+
+# Overall Score
+Give a score out of 10.
+
+# Strengths
+List strengths as bullet points.
+
+# Weaknesses
+List weaknesses as bullet points.
+
+# Missing Skills or Sections
+List missing items as bullet points.
+
+# ATS Optimization Suggestions
+Provide ATS-specific recommendations.
+
+# Final Recommendations
+Provide actionable improvements.
+
+Resume Content:
+
+${pdfData.text}
+`;
+
     const response = await AI.chat.completions.create({
-      model: "gemini-3.5-flash",
+      model: "gemini-3.1-flash-lite",
       messages: [
         {
           role: "user",
@@ -265,17 +300,31 @@ export const resumeReview = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 1800,
     });
+
     const content = response.choices[0].message.content;
 
-    // SQL Query to add this content into database
-    await sql` INSERT INTO creations(user_id,prompt,content,type)
-    VALUES (${userId},'Review the uploded resume',${content},'resume-review')`;
+    await sql`
+      INSERT INTO creations(user_id,prompt,content,type)
+      VALUES (
+        ${userId},
+        'Review the uploaded resume',
+        ${content},
+        'resume-review'
+      )
+    `;
 
-    res.json({ success: true, content });
+    res.json({
+      success: true,
+      content,
+    });
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: error.message });
+    console.error(error);
+
+    res.json({
+      success: false,
+      message: error.message,
+    });
   }
 };

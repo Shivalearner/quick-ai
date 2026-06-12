@@ -10,7 +10,7 @@ const AiTools = () => {
 const {user}=useUser()
 const {openSignIn}=useClerk()
   return (
-    <div className="px-4 sm:px-20 xl:px-32 my-24">
+    <div className="px-4 sm:px-20 xl:px-32 my-10">
       <div className="text-center">
         <h2 className="text-slate-700 text-[42px] font-semibold ">
           Powerful AI Tools
@@ -21,7 +21,7 @@ const {openSignIn}=useClerk()
         </p>
       </div>
 
-      <div className="flex flex-wrap mt-10 justify-center">
+      <div className="flex flex-wrap mt-4 justify-center">
         {/* Mapping AiToolsData  */}
         {AiToolsData.map((tool, index) => (
           <div

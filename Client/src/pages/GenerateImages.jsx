@@ -1,5 +1,11 @@
 import { Image, Sparkles } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useAuth } from "@clerk/react";
+
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+
 const GenerateImages = () => {
   const imageStyle = [
     "Realistic",
@@ -16,8 +22,36 @@ const GenerateImages = () => {
   const [selectedStyle, setselectedStyle] = useState("Realistic");
   const [input, setInput] = useState("");
   const [publish, setPublish] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState("");
+
+  const { getToken } = useAuth();
+
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+    try {
+      setLoading(true);
+      // Prompt
+      // ✅ More detailed
+      const prompt = `Create a highly detailed, professional image of ${input}. 
+                      Art style: ${selectedStyle}. 
+                      Make it visually stunning, high quality and photorealistic where applicable.`;
+      // Api call
+      const { data } = await axios.post(
+        "/api/ai/generate-image",
+        { prompt, publish },
+        { headers: { Authorization: `Bearer ${await getToken()}` } },
+      );
+
+      if (data.success) {
+        setContent(data.content);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+    setLoading(false);
   };
   return (
     <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
@@ -70,8 +104,15 @@ const GenerateImages = () => {
           <p className="text-sm">Make this image public</p>
         </div>
 
-        <button className="flex w-full justify-center items-center gap-2 bg-gradient-to-r from-[#00AD25] to-[#04FF50] text-white px-4 py-2 text-sm rounded-lg cursor-pointer">
-          <Image className="w-5 " />
+        <button
+          disabled={loading}
+          className="flex w-full justify-center items-center gap-2 bg-gradient-to-r from-[#00AD25] to-[#04FF50] text-white px-4 py-2 text-sm rounded-lg cursor-pointer"
+        >
+          {loading ? (
+            <span className="w-4 h-4 my-1 rounded-full border-2 border-t-transparent animate-spin"></span>
+          ) : (
+            <Image className="w-5 " />
+          )}
           Generate Image
         </button>
       </form>
@@ -82,12 +123,22 @@ const GenerateImages = () => {
           <Image className="w-5 h-5 text-[#00AD25]" />
           <h1 className="text-xl font-semibold">Generated Image</h1>
         </div>
-        <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-3 text-gray-400">
-            <Image className="w-9 h-9" />
-            <p>Select a Style and click "Generate Image" to get Started</p>
+        {!content ? (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="text-sm flex flex-col items-center gap-3 text-gray-400">
+              <Image className="w-9 h-9" />
+              <p>Select a Style and click "Generate Image" to get Started</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="h-full mt-3">
+            <img
+              src={content}
+              alt="Generated-Image"
+              className="h-full w-full"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

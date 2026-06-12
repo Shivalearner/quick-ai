@@ -48,6 +48,8 @@ export const toggleLikeCreation = async (req, res) => {
       message = "Creation Liked"; // 5. Fixed syntax from ':' to '='
     }
 
+    const formattedArray=`{${updatedLikes.join(',')}`
+    
     // 6. Simplified PostgreSQL array update using native driver array support
     await sql`UPDATE creations SET likes = ${updatedLikes} WHERE id = ${id}`;
     
