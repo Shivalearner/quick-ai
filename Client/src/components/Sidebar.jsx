@@ -14,12 +14,12 @@ import { NavLink } from "react-router-dom";
 
 const navItems = [
   { to: "/ai", lable: "Dashboard", Icon: House },
+  { to: "/ai/review-resume", lable: "Review Resume", Icon: FileText },
   { to: "/ai/write-article", lable: "Write Article", Icon: SquarePen },
   { to: "/ai/blog-titles", lable: "Blog Titles", Icon: Hash },
-  { to: "/ai/generate-images", lable: "Generate Images", Icon: Image },
+  { to: "/ai/generate-images", lable: "Genrate Images", Icon: Image },
   { to: "/ai/remove-background", lable: "Remove Background", Icon: Eraser },
   { to: "/ai/remove-object", lable: "Remove Object", Icon: Scissors },
-  { to: "/ai/review-resume", lable: "Review Resume", Icon: FileText },
   { to: "/ai/community", lable: "Community", Icon: Users },
 ];
 const Sidebar = ({ Sidebar, setSidebar }) => {
@@ -78,7 +78,7 @@ const Sidebar = ({ Sidebar, setSidebar }) => {
           <div>
             <h1 className="text-sm font-medium">{user.fullName}</h1>
             <p className="text-xs text-gray-500">
-              <Show when={{plan:"premium"}} fallback={<span>Free</span>}>
+              <Show when={{ plan: "premium" }} fallback={<span>Free</span>}>
                 Premium
               </Show>{" "}
               Plan
