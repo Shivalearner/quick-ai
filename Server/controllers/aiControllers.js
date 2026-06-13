@@ -113,7 +113,7 @@ export const generateBlogTitle = async (req, res) => {
   }
 };
 
-// Generate Image
+// Generate Image Using AI
 export const generateImage = async (req, res) => {
   try {
     const { userId } = await req.auth();
@@ -263,33 +263,32 @@ export const resumeReview = async (req, res) => {
       });
     }
 
-    const prompt = `
-You are an expert technical recruiter and ATS resume reviewer.
+    const prompt = `You are an expert technical recruiter and ATS resume reviewer.
 
-Analyze the resume and provide your response in Markdown format.
+                      Analyze the resume and provide your response in Markdown format.
 
-# Overall Score
-Give a score out of 10.
+                      # Overall Score
+                      Give a score out of 10.
 
-# Strengths
-List strengths as bullet points.
+                      # Strengths
+                      List strengths as bullet points.
 
-# Weaknesses
-List weaknesses as bullet points.
+                      # Weaknesses
+                      List weaknesses as bullet points.
 
-# Missing Skills or Sections
-List missing items as bullet points.
+                      # Missing Skills or Sections
+                      List missing items as bullet points.
 
-# ATS Optimization Suggestions
-Provide ATS-specific recommendations.
+                      # ATS Optimization Suggestions
+                      Provide ATS-specific recommendations.
 
-# Final Recommendations
-Provide actionable improvements.
+                      # Final Recommendations
+                      Provide actionable improvements.
 
-Resume Content:
+                      Resume Content:
 
-${pdfData.text}
-`;
+                      ${pdfData.text}
+                      `;
 
     const response = await AI.chat.completions.create({
       model: "gemini-3.1-flash-lite",
