@@ -45,7 +45,7 @@ const ReviewResume = () => {
       >
         <div className="flex items-center gap-3">
           <Sparkles className="w-6 text-[#00DA83]" />
-          <h1 className="text-xl font-semibold">Resume Review</h1>
+          <h1 className="text-xl font-semibold">Resume Reviewer</h1>
         </div>
         <p className="mt-6 text-sm font-medium">Upload Resume</p>
 
