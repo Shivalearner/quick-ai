@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { useClerk, useUser } from "@clerk/react";
-
+import { FaLinkedin } from "react-icons/fa";
 const Hero = () => {
   const logos = [
     "slack",
@@ -35,7 +35,21 @@ const Hero = () => {
           >
             Start creating now
           </button>
-          <button className="bg-white px-10 py-3 rounded-lg border border-gray-300 hover:scale-102 active:scale-95 transition cursor-pointer">
+          <button
+            onClick={() =>
+              window.open(
+                "https://www.linkedin.com/posts/sivabalan-mern-stackdeveloper_opentowork-fullstackdeveloper-reactjs-ugcPost-7476327747082964993-Y_N5/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAErm-oMB8I0bW3sfXpnKQYpsEJrEmhyj9MY",
+                "_blank",
+              )
+            }
+            className="flex items-center gap-2 bg-white px-10 py-3 rounded-lg border border-gray-300 hover:scale-102 active:scale-95 transition cursor-pointer"
+          >
+            <a
+              href="https://linkedin.com"
+              rel="noopener noreferrer"
+            >
+              <FaLinkedin size={24} color="#0077b5" />
+            </a>
             Watch demo
           </button>
         </div>
